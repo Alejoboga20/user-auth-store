@@ -6,6 +6,17 @@ import { CustomError } from '../../domain/errors/custom.error';
 export class AuthService {
 	constructor() {}
 
+	private async generateToken(id: string, email: string) {
+		const token = await JwtAdapter.generateToken({
+			id,
+			email,
+		});
+
+		if (!token) throw CustomError.internalServerError('Error generating token');
+
+		return token;
+	}
+
 	public async registerUser(registerUserDto: RegisterUserDto) {
 		const existUser = await UserModel.findOne({ email: registerUserDto.email });
 		if (existUser) throw CustomError.badRequest('Email already exists');
@@ -18,9 +29,11 @@ export class AuthService {
 
 			const { password, ...userEntity } = UserEntity.fromObject(newUser);
 
+			const token = await this.generateToken(userEntity.id, userEntity.email);
+
 			return {
 				user: userEntity,
-				token: 'jwt',
+				token,
 			};
 		} catch (error) {
 			throw CustomError.internalServerError(`Error creating user: ${error}`);
@@ -37,9 +50,7 @@ export class AuthService {
 
 		if (!isPasswordMatch) throw CustomError.badRequest('Invalid User/Password combination');
 
-		const token = await JwtAdapter.generateToken({ id: user.id, email: user.email });
-
-		if (!token) throw CustomError.internalServerError('Error generating token');
+		const token = await this.generateToken(user.id, user.email);
 
 		const userEntity = UserEntity.fromObject(user);
 
