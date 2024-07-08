@@ -1,4 +1,4 @@
-import { regularExps } from '../../config';
+import { regularExps } from '../../../config';
 
 export class RegisterUserDto {
 	// Private constructor to only allow the static method to create instances
