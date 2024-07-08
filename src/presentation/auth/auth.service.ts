@@ -1,4 +1,4 @@
-import { bcryptAdapter } from '../../config';
+import { bcryptAdapter, JwtAdapter } from '../../config';
 import { UserModel } from '../../data';
 import { LoginUserDto, RegisterUserDto, UserEntity } from '../../domain';
 import { CustomError } from '../../domain/errors/custom.error';
@@ -18,7 +18,10 @@ export class AuthService {
 
 			const { password, ...userEntity } = UserEntity.fromObject(newUser);
 
-			return { user: userEntity, token: 'jwt' };
+			return {
+				user: userEntity,
+				token: 'jwt',
+			};
 		} catch (error) {
 			throw CustomError.internalServerError(`Error creating user: ${error}`);
 		}
@@ -34,9 +37,15 @@ export class AuthService {
 
 		if (!isPasswordMatch) throw CustomError.badRequest('Invalid User/Password combination');
 
+		const token = await JwtAdapter.generateToken({ id: user.id, email: user.email });
+
+		if (!token) throw CustomError.internalServerError('Error generating token');
+
+		const userEntity = UserEntity.fromObject(user);
+
 		return {
-			user: UserEntity.fromObject(user),
-			token: 'jwt',
+			user: userEntity,
+			token,
 		};
 	}
 }
