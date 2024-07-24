@@ -9,6 +9,6 @@ export class CategoryRoutes {
 		router.get('/', controller.getCategories);
 		router.post('/', controller.createCategory);
 
-		return this.routes;
+		return router;
 	}
 }

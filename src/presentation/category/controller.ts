@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CustomError } from '../../domain';
+import { CreateCategoryDto, CustomError } from '../../domain';
 
 export class CategoryController {
 	// Dependency injection
@@ -19,6 +19,8 @@ export class CategoryController {
 	};
 
 	createCategory = async (req: Request, res: Response) => {
-		return res.json({ message: 'Category created' });
+		const [error, createCategoryDto] = CreateCategoryDto.create(req.body);
+
+		return res.json({ error, createCategoryDto });
 	};
 }
