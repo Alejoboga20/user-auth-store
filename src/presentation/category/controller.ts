@@ -22,7 +22,7 @@ export class CategoryController {
 		if (error) return res.status(400).json({ error });
 
 		this.categoryService
-			.getCategories()
+			.getCategories(paginationDto!)
 			.then((categories) => res.status(200).json(categories))
 			.catch((error) => this.handleError(error, res));
 	};
