@@ -1,3 +1,4 @@
+import { time } from 'console';
 import mongoose, { Schema } from 'mongoose';
 
 const productSchema = new mongoose.Schema({
@@ -27,6 +28,14 @@ const productSchema = new mongoose.Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true,
+	},
+});
+
+productSchema.set('toJSON', {
+	virtuals: true,
+	versionKey: false,
+	transform: function (doc, ret) {
+		delete ret._id;
 	},
 });
 
