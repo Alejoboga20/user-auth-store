@@ -4,6 +4,7 @@ export class FileUploadController {
 	constructor() {}
 
 	uploadFile = (req: Request, res: Response) => {
+		console.log({ files: req.files });
 		res.json({ message: 'File uploaded successfully' });
 	};
 
