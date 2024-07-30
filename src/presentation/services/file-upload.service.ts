@@ -1,9 +1,10 @@
 import path from 'path';
 import fs from 'fs';
 import type { UploadedFile } from 'express-fileupload';
+import { UUIDAdapter } from '../../config';
 
 export class FileUploadService {
-	constructor() {}
+	constructor(private readonly uuid = UUIDAdapter.v4) {}
 
 	private checkFolderExists(folderPath: string) {
 		if (!fs.existsSync(folderPath)) {
@@ -27,9 +28,13 @@ export class FileUploadService {
 		try {
 			const fileExtension = file.mimetype.split('/')[1];
 			const destination = path.resolve(__dirname, '../../../', folder);
+			const fileName = `${this.uuid()}.${fileExtension}`;
+
 			this.checkFolderExists(destination);
 
-			file.mv(destination + `/${file.name}.${fileExtension}`);
+			file.mv(`${destination}/${fileName}`);
+
+			return { fileName };
 		} catch (error) {
 			console.log({ error });
 		}
