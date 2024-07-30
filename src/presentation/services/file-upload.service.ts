@@ -1,8 +1,14 @@
+import path from 'path';
+import fs from 'fs';
+import type { UploadedFile } from 'express-fileupload';
+
 export class FileUploadService {
 	constructor() {}
 
 	private checkFolderExists(folderPath: string) {
-		throw new Error('not implemmented');
+		if (!fs.existsSync(folderPath)) {
+			fs.mkdirSync(folderPath);
+		}
 	}
 
 	uploadMultiple(
@@ -13,11 +19,19 @@ export class FileUploadService {
 		throw new Error('not implemented');
 	}
 
-	uploadSingle(
-		file: File,
+	async uploadSingle(
+		file: UploadedFile,
 		folder: string = 'uploads',
 		validExtensions: string[] = ['jpg', 'jpeg', 'png', 'gif']
 	) {
-		throw new Error('not implemmented');
+		try {
+			const fileExtension = file.mimetype.split('/')[1];
+			const destination = path.resolve(__dirname, '../../../', folder);
+			this.checkFolderExists(destination);
+
+			file.mv(destination + `/${file.name}.${fileExtension}`);
+		} catch (error) {
+			console.log({ error });
+		}
 	}
 }
