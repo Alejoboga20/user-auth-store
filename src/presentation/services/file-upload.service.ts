@@ -13,14 +13,6 @@ export class FileUploadService {
 		}
 	}
 
-	uploadMultiple(
-		file: File[],
-		folder: string = 'uploads',
-		validExtensions: string[] = ['jpg', 'jpeg', 'png', 'gif']
-	) {
-		throw new Error('not implemented');
-	}
-
 	async uploadSingle(
 		file: UploadedFile,
 		folder: string = 'uploads',
@@ -46,5 +38,16 @@ export class FileUploadService {
 			console.log({ error });
 			throw error;
 		}
+	}
+
+	async uploadMultiple(
+		files: UploadedFile[],
+		folder: string = 'uploads',
+		validExtensions: string[] = ['jpg', 'jpeg', 'png', 'gif']
+	) {
+		const fileNames = await Promise.all(
+			files.map((file) => this.uploadSingle(file, folder, validExtensions))
+		);
+		return fileNames;
 	}
 }
