@@ -3,8 +3,6 @@ import { FileUploadService } from '../services/file-upload.service';
 import { CustomError } from '../../domain';
 import { UploadedFile } from 'express-fileupload';
 
-const VALID_TYPES = ['users', 'products', 'categories'];
-
 export class FileUploadController {
 	constructor(private readonly fileUploadService: FileUploadService) {}
 
@@ -19,10 +17,6 @@ export class FileUploadController {
 
 	uploadFile = (req: Request, res: Response) => {
 		const type = req.params.type;
-
-		if (!VALID_TYPES.includes(type))
-			return res.status(400).json({ error: 'Invalid type', validTypes: VALID_TYPES });
-
 		const file = req.body.files[0] as UploadedFile;
 
 		this.fileUploadService
@@ -33,10 +27,6 @@ export class FileUploadController {
 
 	uploadMultipleFiles = (req: Request, res: Response) => {
 		const type = req.params.type;
-
-		if (!VALID_TYPES.includes(type))
-			return res.status(400).json({ error: 'Invalid type', validTypes: VALID_TYPES });
-
 		const files = req.body.files as UploadedFile[];
 
 		this.fileUploadService
